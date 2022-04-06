@@ -51,9 +51,11 @@ bestkPMove = 0
 
 counter = 0
 
+
+
 for kPTurnTemp in range(0, 100, 1):
     kPTurn = kPTurnTemp/2
-    for kPMoveTemp in range(0, 100, 1):
+    for kPMoveTemp in range(100, 200, 1):
         kPMove = kPMoveTemp/1000
         currentTime = 0
         for x in range (0, 10000):

@@ -53,8 +53,8 @@ counter = 0
 
 
 
-for kPTurnTemp in range(0, 100, 1):
-    kPTurn = kPTurnTemp/2
+for kPTurnTemp in range(1350, 1450, 1):
+    kPTurn = kPTurnTemp/100
     for kPMoveTemp in range(100, 200, 1):
         kPMove = kPMoveTemp/1000
         currentTime = 0

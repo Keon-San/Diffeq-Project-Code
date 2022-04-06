@@ -51,6 +51,7 @@ bestkPMove = 0
 
 counter = 0
 
+
 for kPTurnTemp in range(0, 100, 1):
     kPTurn = kPTurnTemp/2
     for kPMoveTemp in range(0, 100, 1):

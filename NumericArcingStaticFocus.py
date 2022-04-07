@@ -39,7 +39,7 @@ def capSpeed(speed):
     return max(-maxWheelSpeed, min(speed, maxWheelSpeed))
 
 def findWheelSpeeds(thetaSpeed, movementSpeed):
-    rawWheelDifferential = thetaSpeed*trackWidth
+    rawWheelDifferential = (thetaSpeed*trackWidth)/2
     return [capSpeed(movementSpeed-rawWheelDifferential), capSpeed(movementSpeed+rawWheelDifferential)]
 
 angleDotProductScalingPower = 1
@@ -53,7 +53,7 @@ counter = 0
 
 
 
-for kPTurnTemp in range(1350, 1450, 1):
+for kPTurnTemp in range(2700, 2800, 1):
     kPTurn = kPTurnTemp/100
     for kPMoveTemp in range(100, 200, 1):
         kPMove = kPMoveTemp/1000

@@ -4,6 +4,9 @@ import numpy
 ballX = 4
 ballY = 4
 
+ballXMovement = 0.02
+ballYMovement = 0
+
 robotX = 0
 robotY = 0
 robotTheta = 0
@@ -39,8 +42,9 @@ def capSpeed(speed):
     return max(-maxWheelSpeed, min(speed, maxWheelSpeed))
 
 def findWheelSpeeds(thetaSpeed, movementSpeed):
-    rawWheelDifferential = thetaSpeed*trackWidth
+    rawWheelDifferential = (thetaSpeed*trackWidth)/2
     return [capSpeed(movementSpeed-rawWheelDifferential), capSpeed(movementSpeed+rawWheelDifferential)]
+
 
 angleDotProductScalingPower = 1
 
@@ -55,34 +59,37 @@ counter = 0
 
 
 kPTurn = 14.37
-for kPMoveTemp in range(200, 300, 1):
-    kPMove = kPMoveTemp/1000
-    currentTime = 0
-    for x in range (0, 10000):
-        thetaSpeed = getThetaMovement()
-        movementSpeed = getMovementSpeed()
-        wheelSpeeds = findWheelSpeeds(thetaSpeed, movementSpeed)
+kPMove = 0.224
+currentTime = 0
+for x in range (0, 10000):
+    thetaSpeed = getThetaMovement()
+    movementSpeed = getMovementSpeed()
+    wheelSpeeds = findWheelSpeeds(thetaSpeed, movementSpeed)
 
-        robotThetaChange = getRealTheta(wheelSpeeds)*timeStep
-        robotXChange = getXMovement(wheelSpeeds)*timeStep
-        robotYChange = getYMovement(wheelSpeeds)*timeStep
+    robotThetaChange = getRealTheta(wheelSpeeds)*timeStep
+    robotXChange = getXMovement(wheelSpeeds)*timeStep
+    robotYChange = getYMovement(wheelSpeeds)*timeStep
 
-        robotTheta += robotThetaChange
-        robotX += robotXChange
-        robotY += robotYChange
-        currentTime += timeStep
-        if getDist(robotX, robotY, ballX, ballY) < 0.5:
-            break
-    counter += 1
-    print(counter)
-    print(currentTime)
-    robotX = 0
-    robotY = 0
-    robotTheta = 0
-    if currentTime < bestTime:
-        bestTime = currentTime
-        bestkPMove = kPMove
-        bestkPTurn = kPTurn
+    robotTheta += robotThetaChange
+    robotX += robotXChange
+    robotY += robotYChange
+
+    ballX += ballXMovement * timeStep
+    ballY += ballYMovement * timeStep
+
+    currentTime += timeStep
+    if getDist(robotX, robotY, ballX, ballY) < 0.5:
+        break
+counter += 1
+print(counter)
+print(currentTime)
+robotX = 0
+robotY = 0
+robotTheta = 0
+if currentTime < bestTime:
+    bestTime = currentTime
+    bestkPMove = kPMove
+    bestkPTurn = kPTurn
 
 print(bestTime)
 print(bestkPMove)

@@ -1,11 +1,13 @@
 import math
 import numpy
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-whitegrid')
 
 ballX = 4
 ballY = 4
 
-ballXMovement = 0.5
-ballYMovement = 0.5
+ballXMovement = -0.25
+ballYMovement = 0
 
 robotX = 0
 robotY = 0
@@ -61,8 +63,7 @@ bestkPMove = 0
 
 counter = 0
 
-
-
+positionsArray = []
 
 kPTurn = 27.7
 kPMove = 0.222
@@ -91,6 +92,8 @@ for x in range (0, 100000):
     robotTheta += robotThetaChange
     robotX += robotXChange
     robotY += robotYChange
+
+    positionsArray.append([robotX, robotY])
     
     print(getDist(robotX, robotY, ballX, ballY))
 
@@ -107,6 +110,13 @@ if currentTime < bestTime:
     bestTime = currentTime
     bestkPMove = kPMove
     bestkPTurn = kPTurn
+
+print(len(positionsArray))
+
+numpyArray = numpy.asarray(positionsArray)
+
+plt.plot(numpyArray[:,0], numpyArray[:,1], color="black")
+plt.show()
 
 print(bestTime)
 print(bestkPMove)

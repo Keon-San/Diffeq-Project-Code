@@ -4,8 +4,8 @@ import numpy
 ballX = 4
 ballY = 4
 
-ballXMovement = 0.02
-ballYMovement = 0
+ballXMovement = 0.5
+ballYMovement = 0.5
 
 robotX = 0
 robotY = 0
@@ -22,9 +22,9 @@ trackWidth = 1
 def getDist(x1, y1, x2, y2):
     return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
 
-def getMovementSpeed():
-    angleDotProduct = math.cos(robotTheta)*((ballX-robotX)/(math.sqrt(math.pow(ballX-robotX, 2) + math.pow(ballY-robotY, 2)))) + math.sin(robotTheta)*((ballY-robotY)/(math.sqrt(math.pow(ballX-robotX, 2) + math.pow(ballY-robotY, 2))))
-    return math.pow(angleDotProduct, angleDotProductScalingPower)*kPMove*getDist(robotX, robotY, ballX, ballY)
+def getMovementSpeed(baseSpeed, desiredVelocity):
+    angleDotProduct = math.cos(robotTheta)*((desiredVelocityVector[0])/(math.sqrt(math.pow(desiredVelocityVector[0], 2) + math.pow(desiredVelocityVector[1], 2)))) + math.sin(robotTheta)*(desiredVelocityVector[1])/(math.sqrt(math.pow(desiredVelocityVector[0], 2) + math.pow(desiredVelocityVector[1], 2)))
+    return math.pow(angleDotProduct, angleDotProductScalingPower)*baseSpeed
 
 def getXMovement(wheelSpeeds):
     return math.cos(robotTheta)*(wheelSpeeds[0] + wheelSpeeds[1])/2
@@ -32,8 +32,8 @@ def getXMovement(wheelSpeeds):
 def getYMovement(wheelSpeeds):
     return math.sin(robotTheta)*(wheelSpeeds[0] + wheelSpeeds[1])/2
 
-def getThetaMovement():
-    return kPTurn*(math.atan2(ballX-robotX, ballY-robotY) - robotTheta)
+def getThetaMovement(desiredAngle):
+    return kPTurn*(desiredAngle - robotTheta)
 
 def getRealTheta(wheelSpeeds):
     return (wheelSpeeds[1] - wheelSpeeds[0])/trackWidth
@@ -44,6 +44,12 @@ def capSpeed(speed):
 def findWheelSpeeds(thetaSpeed, movementSpeed):
     rawWheelDifferential = (thetaSpeed*trackWidth)/2
     return [capSpeed(movementSpeed-rawWheelDifferential), capSpeed(movementSpeed+rawWheelDifferential)]
+
+def to360Wrap(angleWrap):
+    if (angleWrap < 0):
+        return angleWrap + 360
+    else:
+        return angleWrap
 
 
 angleDotProductScalingPower = 1
@@ -61,9 +67,21 @@ counter = 0
 kPTurn = 14.37
 kPMove = 0.224
 currentTime = 0
-for x in range (0, 10000):
-    thetaSpeed = getThetaMovement()
-    movementSpeed = getMovementSpeed()
+for x in range (0, 100000):
+    lastBallX = ballX
+    lastBallY = ballY
+
+    ballX += ballXMovement * timeStep
+    ballY += ballYMovement * timeStep
+
+    ballVelocity = [(ballX - lastBallX)/timeStep, (ballY - lastBallY)/timeStep]
+
+    desiredVelocityVector = [kPMove*getDist(robotX, robotY, ballX, ballY)*math.cos(math.atan2(ballY-robotY, ballX-robotX)), kPMove*getDist(robotX, robotY, ballX, ballY)*math.sin(math.atan2(ballY-robotY, ballX-robotX))]
+    desiredVelocityVector[0] += ballVelocity[0]
+    desiredVelocityVector[1] += ballVelocity[1] 
+
+    thetaSpeed = getThetaMovement(math.atan2(ballY-robotY, ballX-robotX))
+    movementSpeed = getMovementSpeed(math.sqrt(math.pow(desiredVelocityVector[0], 2) + math.pow(desiredVelocityVector[1], 2)), desiredVelocityVector)
     wheelSpeeds = findWheelSpeeds(thetaSpeed, movementSpeed)
 
     robotThetaChange = getRealTheta(wheelSpeeds)*timeStep
@@ -73,9 +91,8 @@ for x in range (0, 10000):
     robotTheta += robotThetaChange
     robotX += robotXChange
     robotY += robotYChange
-
-    ballX += ballXMovement * timeStep
-    ballY += ballYMovement * timeStep
+    
+    print(getDist(robotX, robotY, ballX, ballY))
 
     currentTime += timeStep
     if getDist(robotX, robotY, ballX, ballY) < 0.5:

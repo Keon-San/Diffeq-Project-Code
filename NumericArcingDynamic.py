@@ -64,8 +64,8 @@ counter = 0
 
 
 
-kPTurn = 14.37
-kPMove = 0.224
+kPTurn = 27.7
+kPMove = 0.222
 currentTime = 0
 for x in range (0, 100000):
     lastBallX = ballX
@@ -80,7 +80,7 @@ for x in range (0, 100000):
     desiredVelocityVector[0] += ballVelocity[0]
     desiredVelocityVector[1] += ballVelocity[1] 
 
-    thetaSpeed = getThetaMovement(math.atan2(ballY-robotY, ballX-robotX))
+    thetaSpeed = getThetaMovement(math.atan2(desiredVelocityVector[1], desiredVelocityVector[0]))
     movementSpeed = getMovementSpeed(math.sqrt(math.pow(desiredVelocityVector[0], 2) + math.pow(desiredVelocityVector[1], 2)), desiredVelocityVector)
     wheelSpeeds = findWheelSpeeds(thetaSpeed, movementSpeed)
 
